@@ -45,10 +45,10 @@ CREATE TABLE Loans (
   DueDate DATE,
   DateReturned DATE,
   PRIMARY KEY (LoanID),
-  CONSTRAINT FK_Loans_Borrowers
+  CONSTRAINT FK_Loans_Borrowers_BorrowerID
     FOREIGN KEY (BorrowerID)
       REFERENCES Borrowers(BorrowerID),
-  CONSTRAINT FK_Loans_Books
+  CONSTRAINT FK_Loans_Books_BookID
     FOREIGN KEY (BookID)
       REFERENCES Books(BookID)
 );
@@ -58,7 +58,7 @@ CREATE TABLE AuditLog(
 	BookID INT,
 	StatusChange VARCHAR(10),
 	ChangeDate DATE,
-	CONSTRAINT FK_AuditLog_Books
+	CONSTRAINT FK_AuditLog_Books_BookID
 		FOREIGN KEY (BookID)
 			REFERENCES Books(BookID)
 );
