@@ -1,28 +1,17 @@
-USE Tech_Lib;
+USE TechLib;
 
-WITH Ages AS
+WITH RankedGenres AS 
 (
-	SELECT Borrower_ID, DATEDIFF(year, Date_Of_Birth , CONVERT(DATE, GETDATE())) AS Age
-	FROM Borrowers
-),
-
-Age_Ranges AS
-(
-	SELECT Borrower_ID, CONCAT(((Ages.Age-1)/10)*10+1,'-', ((Ages.Age-1)/10 +1)*10) AS Age_Range 
-	FROM Ages
-),
-
-Ranked_Genres AS
-(
-	Select Age_Ranges.Age_Range , Books.Genre, Count(*) AS Num_Of_Borrows,
-	Rank() OVER (PARTITION BY Age_Ranges.Age_Range ORDER BY Count(*) DESC) AS Genre_Rank
-	FROM Age_Ranges
-	JOIN Loans ON Age_Ranges.Borrower_ID = Loans.Borrower_ID
-	JOIN Books ON Books.Book_ID = Loans.Book_ID
-	GROUP BY Age_Ranges.Age_Range, Books.Genre
+	SELECT 
+		(DATEDIFF(YEAR, br.DateOfBirth, GETDATE()) - 1) / 10 AS AgeRange,
+		bk.Genre,
+		RANK() OVER (PARTITION BY (DATEDIFF(YEAR, br.DateOfBirth, GETDATE()) - 1) / 10 ORDER BY COUNT(*) DESC) AS [RANK]
+	FROM Borrowers br
+	JOIN Loans l ON l.BorrowerID = br.BorrowerID
+	JOIN Books bk ON bk.BookID = l.BookID
+	GROUP BY (DATEDIFF(YEAR, br.DateOfBirth, GETDATE()) - 1) / 10, bk.Genre
 )
+SELECT CONCAT(AgeRange * 10 + 1,'-', (AgeRange + 1) * 10) AS AgeRange, Genre AS PreferredGenre
+FROM RankedGenres
+WHERE [RANK] = 1;
 
-SELECT Age_Range, Genre AS Preferred_Genre
-FROM Ranked_Genres
-WHERE Genre_Rank = 1
-ORDER BY Age_Range

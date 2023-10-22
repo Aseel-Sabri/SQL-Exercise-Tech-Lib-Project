@@ -1,12 +1,11 @@
-USE Tech_Lib;
+USE TechLib;
 
-DROP PROCEDURE IF EXISTS sp_AddNewBorrower;
 GO
-CREATE PROCEDURE sp_AddNewBorrower
+CREATE OR ALTER PROCEDURE sp_AddNewBorrower
 (@FirstName VARCHAR(50), @LastName VARCHAR(50), @Email VARCHAR(50), @DateOfBirth DATE, @MembershipDate DATE)
 AS BEGIN
   IF EXISTS (SELECT EMAIL FROM Borrowers WHERE EMAIL = @EMAIL)
-  BEGIN
+  BEGIN;
 	THROW 50005, N'Email Already Exists', 1;
   END
 

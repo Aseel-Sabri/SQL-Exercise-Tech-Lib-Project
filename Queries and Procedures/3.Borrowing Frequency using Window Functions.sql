@@ -1,8 +1,8 @@
-USE Tech_Lib;
+USE TechLib;
 
 SELECT 
-	Borrower_ID, 
-	COUNT(Borrower_ID) AS Frequency, 
-	RANK() OVER (ORDER BY COUNT(Borrower_ID) DESC) AS Borrower_Rank
+	BorrowerID, 
+	COUNT(BorrowerID) AS Frequency, 
+	RANK() OVER (ORDER BY COUNT(BorrowerID) DESC) AS BorrowerRank
 FROM Loans
-GROUP BY Borrower_ID;
+GROUP BY BorrowerID;

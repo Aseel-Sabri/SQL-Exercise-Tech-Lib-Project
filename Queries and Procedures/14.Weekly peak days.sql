@@ -1,19 +1,19 @@
-USE Tech_Lib;
+USE TechLib;
 
-WITH LOANS_DATES AS
+WITH LoansDates AS
 (
-	SELECT Date_Borrowed AS Loan_Date
+	SELECT DateBorrowed AS LoanDate
 	FROM Loans
 	UNION 
-	SELECT Date_Returned AS Loan_Date
+	SELECT DateReturned AS LoanDate
 	FROM Loans
-	WHERE Date_Returned IS NOT NULL
+	WHERE DateReturned IS NOT NULL
 )
 
 SELECT TOP(3)
-DATENAME(WEEKDAY, Loan_Date) AS Week_Day, 
-Count(*) AS Loans_Count, 
-CONCAT(CAST(Count(*) * 100.0 /SUM(Count(*)) OVER() AS NUMERIC(4,2)), '%') AS Loans_Percentage
-FROM LOANS_DATES
-GROUP BY DATENAME(WEEKDAY, Loan_Date)
-ORDER BY Count(*) DESC
+	DATENAME(WEEKDAY, LoanDate) AS WeekDay, 
+	COUNT(*) AS LoansCount, 
+	CONCAT(CAST(COUNT(*) * 100.0 / SUM(Count(*)) OVER() AS NUMERIC(4,2)), '%') AS LoansPercentage
+FROM LoansDates
+GROUP BY DATENAME(WEEKDAY, LoanDate)
+ORDER BY COUNT(*) DESC

@@ -1,7 +1,6 @@
-USE Tech_Lib;
+USE TechLib;
 
-SELECT Book_ID, Borrower_ID
+SELECT BookID, BorrowerID
 FROM Loans
-WHERE DATEDIFF(DAY, Due_Date, Date_Returned) > 30
-	OR Date_Returned IS NULL AND DATEDIFF(DAY, Due_Date, GETDATE()) > 30
-ORDER BY Book_ID;
+WHERE DATEDIFF(DAY, DueDate, ISNULL(DateReturned, GETDATE())) > 30
+ORDER BY BookID;

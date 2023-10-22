@@ -1,12 +1,13 @@
-USE Tech_Lib;
+USE TechLib;
 
-WITH Active_Borrowers AS
+WITH ActiveBorrowers AS
 (
-	SELECT Borrower_ID FROM Loans
-	WHERE Date_Returned IS NULL
-	GROUP BY Borrower_ID
-	HAVING Count(Borrower_ID) > 1
+	SELECT BorrowerID 
+	FROM Loans
+	WHERE DateReturned IS NULL
+	GROUP BY BorrowerID
+	HAVING COUNT(BorrowerID) > 1
 )
-SELECT Borrower_ID, First_Name, Last_Name, Email
-FROM Borrowers
-WHERE Borrower_ID IN (SELECT * FROM Active_Borrowers);
+SELECT b.BorrowerID, b.FirstName, b.LastName, b.Email
+FROM Borrowers b
+JOIN ActiveBorrowers ab ON b.BorrowerID = ab.BorrowerID

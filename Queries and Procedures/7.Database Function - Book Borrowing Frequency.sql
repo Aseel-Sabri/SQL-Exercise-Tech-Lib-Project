@@ -1,21 +1,20 @@
-USE Tech_Lib;
+USE TechLib;
 
-DROP FUNCTION IF EXISTS fn_BookBorrowingFrequency;
 GO
-CREATE FUNCTION fn_BookBorrowingFrequency
+CREATE OR ALTER FUNCTION fn_BookBorrowingFrequency
 (@BookID INT)
 RETURNS INT AS
 BEGIN
-	DECLARE @freq INT;
+	DECLARE @BorrowingFrequency INT;
 
-	SELECT @freq=Count(*) 
+	SELECT @BorrowingFrequency = COUNT(*) 
 	FROM Loans
-	GROUP BY Book_ID
-	HAVING Book_ID = @BookID;
+	GROUP BY BookID
+	HAVING BookID = @BookID;
 
-	IF (@freq is null)
-		SET @freq = 0;
+	SET @BorrowingFrequency = ISNULL(@BorrowingFrequency, 0);
 
-	RETURN @freq;
+	RETURN @BorrowingFrequency;
 END;
 GO
+

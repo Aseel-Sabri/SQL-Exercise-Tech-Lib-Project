@@ -1,29 +1,23 @@
-USE Tech_Lib;
+USE TechLib;
 
-DROP FUNCTION IF EXISTS fn_CalculateOverdueFees;
 GO
-CREATE FUNCTION fn_CalculateOverdueFees
+CREATE OR ALTER FUNCTION fn_CalculateOverdueFees
 (@LoanID INT)
 RETURNS INT AS
 BEGIN
 	DECLARE @Fees INT;
-	DECLARE @Late_Days INT;
+	DECLARE @LateDays INT;
 
-	IF ((SELECT Date_Returned FROM Loans WHERE Loans.Loan_ID = @LoanID) IS NULL)
-		SELECT @Late_Days=DATEDIFF(day, Due_Date, GETDATE()) FROM Loans
-		WHERE Loans.Loan_ID = @LoanID;
-	ELSE
-		SELECT @Late_Days=DATEDIFF(day, Due_Date, Date_Returned) FROM Loans
-		WHERE Loans.Loan_ID = @LoanID;
+	SELECT @LateDays = DATEDIFF(day, DueDate, ISNULL(DateReturned, GETDATE()))
+	FROM Loans
+	WHERE LoanID = @LoanID;
 
-
-	IF (@Late_Days < 0)
-		SET @Fees = 0;
-	ELSE IF (@Late_Days > 30)
-		SET @Fees = 30 + (@Late_Days - 30) * 2;
-	ELSE 
-		SET @Fees = @Late_Days;
+	SELECT @Fees = 
+		(SELECT MAX(Overdue.TotalDays) FROM (VALUES (@LateDays), (0)) AS Overdue(TotalDays)) 
+		+ (SELECT MAX(Overdue.ExtraDays) FROM (VALUES (@LateDays - 30), (0)) AS Overdue(ExtraDays));
 
 	RETURN @Fees;
 END;
 GO
+
+

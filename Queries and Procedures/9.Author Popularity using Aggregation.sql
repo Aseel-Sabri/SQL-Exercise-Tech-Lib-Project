@@ -1,7 +1,6 @@
-USE Tech_Lib;
+USE TechLib;
 
-SELECT Books.Author, RANK() OVER (ORDER BY COUNT(Books.Author)) AS Author_Rank
-FROM Books
-JOIN Loans
-ON Books.Book_ID = Loans.Book_ID
-GROUP BY Books.Author;
+SELECT b.Author, RANK() OVER (ORDER BY COUNT(b.Author)) AS AuthorRank
+FROM Books b
+JOIN Loans l ON b.BookID = l.BookID
+GROUP BY b.Author;

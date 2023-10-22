@@ -1,10 +1,11 @@
-USE Tech_Lib;
+USE TechLib;
 
-DECLARE @month INT
-SELECT @month = 5 -- Change Month
+DECLARE @Month INT
+SELECT @Month = 5 -- Change Month
 
-SELECT TOP(1) Books.Genre FROM Books
-JOIN Loans ON Books.Book_ID = Loans.Book_ID
-WHERE MONTH(Loans.Date_Borrowed) = @month
-GROUP BY Books.Genre
-ORDER BY COUNT(Books.Genre) DESC;
+SELECT TOP(1) b.Genre 
+FROM Books b
+JOIN Loans l ON b.BookID = l.BookID
+WHERE MONTH(l.DateBorrowed) = @Month
+GROUP BY b.Genre
+ORDER BY COUNT(b.Genre) DESC;
